@@ -93,6 +93,7 @@ def CreateEvent(calendar, course_weeks_start, course_weeks_end, year, semester, 
             course_date.month, course_date.day, course_end_time[0],course_end_time[1], course_end_time[2], tzinfo=time_zone))
         event.add('dtstamp', datetime.datetime(course_date.year,
             course_date.month, course_date.day, course_begin_time[0], course_begin_time[1], course_begin_time[2], tzinfo=time_zone))
+        event.add('description', "周数:{},教师:{}".format(a['zcd'], a['xm']))
         event.add('location', a['cdmc'])
         calendar.add_component(event)
     return calendar
