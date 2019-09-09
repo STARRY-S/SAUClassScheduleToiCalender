@@ -7,8 +7,8 @@ import pytz
 from icalendar import Calendar, Event
 
 # 在此处输入获取到的cookie
-#cookie = "JSESSIONID=XXXXX"
-cookie = "JSESSIONID=F102F72E25F6FBFECA6FE8E15ABF42D2"
+cookie = "JSESSIONID=XXXXX"
+
 headers = {
 "Accept": "*/*",
 "Accept-Encoding": "gzip, deflate, br",
