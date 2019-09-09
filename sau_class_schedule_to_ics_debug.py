@@ -4,12 +4,11 @@ import requests
 import datetime
 import json
 import pytz
-#from datetime import datetime
 from icalendar import Calendar, Event
 
 # 在此处输入获取到的cookie
-cookie = "JSESSIONID=XXXXX"
-
+#cookie = "JSESSIONID=XXXXX"
+cookie = "JSESSIONID=F102F72E25F6FBFECA6FE8E15ABF42D2"
 headers = {
 "Accept": "*/*",
 "Accept-Encoding": "gzip, deflate, br",
@@ -73,14 +72,18 @@ def GetCourseDate(year, semester, week, course_in_day_of_week):
         else:
             start = start + datetime.timedelta(days=1)
     time = start + datetime.timedelta(days=(week-1) * 7 + (course_in_day_of_week-1))
+    print("{}.{}.{}".format(time.year, time.month, time.day), "星期", time.weekday()+1)
     return time
 
 # 创建事件
 def CreateEvent(calendar, course_weeks_start, course_weeks_end, year, semester, a):
     time_zone = pytz.timezone('Asia/Shanghai')
     course_in_day_of_week = int(a['xqj']) # 星期几
-    course_begin_time, course_end_time = GetCourseTime(a['jcor'])
+    course_begin_time, course_end_time = GetCourseTime(a['jcor'])   # 根据课程的节数返回上课的时间
+    print("\n课程名称: ", a['kcmc'], "星期:", a['xqj'])
+    print("该课程由第{}周上到第{}周".format(course_weeks_start, course_weeks_end))
     for week in range(course_weeks_start, course_weeks_end+1):
+        print("第{}周:".format(week))
         course_date = GetCourseDate(year, semester, week, course_in_day_of_week)
         event = Event()
         event.add('summary', a['kcmc'])
