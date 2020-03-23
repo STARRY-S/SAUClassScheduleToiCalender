@@ -4,10 +4,13 @@ import requests
 import datetime
 import json
 import pytz
+import sys
 from icalendar import Calendar, Event
 
 # 在此处输入获取到的cookie
-cookie = "JSESSIONID=XXXXX"
+cookie = ""
+# 在此处输入文件的路径
+filename = ""
 
 headers = {
 "Accept": "*/*",
@@ -16,7 +19,7 @@ headers = {
 "Connection": "keep-alive",
 "Content-Length": "14",
 "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-"Cookie": cookie,
+"Cookie": "",
 "Host": "jxgl.sau.edu.cn",
 "Origin": "https://jxgl.sau.edu.cn",
 "Referer": "https://jxgl.sau.edu.cn/jwglxt/kbcx/xskbcx_cxXskbcxIndex.html?gnmkdm=N2151&layout=default&su=183405010224",
@@ -42,6 +45,7 @@ def GetCourseTime(time):
 
 # 抓取课表信息并转换为字典
 def GetCourseInfo_dict(data):
+    headers["Cookie"] = cookie
     request = requests.post(url, headers=headers, data=data)
     if request.status_code != 200:
         print("RESPONSE", request.status_code)
@@ -49,6 +53,19 @@ def GetCourseInfo_dict(data):
         exit(0)
     a = request.text
     b = json.loads(a)
+    return b
+
+#从文件中导入课表数据
+def GetCourseInfoFromFile(filename):
+    try:
+        file = open(filename, mode='r')
+    except:
+        print("Error: Unable to open file: ", filename)
+        exit(1)
+    a = file.read()
+    b = json.loads(a)
+    file.close()
+    print("Successfully read file: ", filename)
     return b
 
 # 返回上课的周的区间
@@ -115,17 +132,66 @@ def ConvertCalendar(course_dict):
     output_file = open(output_file_name, 'wb')
     output_file.write(calendar.to_ical())
     output_file.close()
-    print('Success write your calendar to', output_file_name)
+    print('Successfully write your calendar to', output_file_name)
+
+def ShowHelp():
+    print("Usage:\npython3 ./sau_class_schedule_to_ics.py [option]")
+    print("\nOptions:")
+    print("     -c, --cookie [COOKIE]\tUse cookie get course data. (From internet)")
+    print("     -f, --file [Directory]\tImport course data from file.")
+    print("     -v, --verstion\t\tShow version.")
+    print("     -h, --help\t\t\tShow this help.")
 
 def main():
+    global cookie, filename
     now = datetime.datetime.now()
     if now.month <= 1 or now.month >= 9:
         semester = "3"
     else:
         semester = "12"
-    data = {"xnm": "{}".format(now.year), "xqm": semester}
-    course_dict = GetCourseInfo_dict(data)
-    ConvertCalendar(course_dict)
+
+    if len(sys.argv) == 1:
+        data = {"xnm": "{}".format(now.year), "xqm": semester}
+        course_dict = GetCourseInfo_dict(data)
+        ConvertCalendar(course_dict)
+        exit(0)
+
+    for i in range(1, len(sys.argv)):
+        if sys.argv[i] == '-f' or sys.argv[i] == '--file':
+            if i+1 < len(sys.argv):
+                filename = sys.argv[i+1]
+            else:
+                if filename == "":
+                    ShowHelp()
+                    exit(1)
+
+            course_dict = GetCourseInfoFromFile(filename)
+            ConvertCalendar(course_dict)
+            exit(0)
+
+        elif sys.argv[i] == '-v' or sys.argv[i] == '--version':
+            print("Version: 1.2 - debug - 2020.3.24")
+            print("by: STARRY-S")
+            exit(0)
+
+        elif sys.argv[i] == '-h' or sys.argv[i] == '--help':
+            ShowHelp()
+            exit(0)
+
+        elif sys.argv[i] == '-c' or sys.argv[i] == '--cookie':
+            if i+1 < len(sys.argv):
+                cookie = sys.argv[i+1]
+            else:
+                if cookie == "":
+                    ShowHelp()
+                    exit(1)
+            data = {"xnm": "{}".format(now.year), "xqm": semester}
+            course_dict = GetCourseInfo_dict(data)
+            ConvertCalendar(course_dict)
+            exit(0)
+
+    ShowHelp()
+
 
 if __name__ == '__main__':
     main()
