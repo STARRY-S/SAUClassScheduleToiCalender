@@ -165,7 +165,7 @@ def main():
             exit(0)
 
         elif sys.argv[i] == '-v' or sys.argv[i] == '--version':
-            print("Version: 1.2 - 2020.3.24")
+            print("Version: 1.3 - 2020.3.24")
             print("by: STARRY-S")
             exit(0)
 

@@ -20,13 +20,15 @@ python sau_class_schedule_to_ics.py -h
 1. Chrome浏览器打开教务管理系统，按F12，打开Network，输入用户名和密码登录。
 
 2. 找到Request Headers，复制Cookies，通过指令`$ python sau_class_schedule_to_ics.py -c JSESSIONID=XXXXX`运行。
+
 ![](images/usage.jpg)
 
 ## 没有连接到校园网的情况:
 
 1. Chrome打开教务管理系统，按F12，打开Network，输入用户密码登录后打开选课->学生课表查询。
 
-2. 选择`xskbcx_cxXsKb.html`字样开头的文件，将Response的那一大坨文字全选复制，新建个文本文件复制过去。
+2. 选择`xskbcx_cxXsKb.html`字样开头的文件，将Response的那一大坨文字全选复制，新建个文本文件将复制的内容粘贴到新建的文件中。
+
 ![](images/002.jpg)
 
 3. `$ python sau_class_schedule_to_ics.py -f filename.txt`
