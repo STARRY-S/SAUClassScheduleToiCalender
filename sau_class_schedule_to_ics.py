@@ -45,6 +45,7 @@ def GetCourseTime(time):
 
 # 抓取课表信息并转换为字典
 def GetCourseInfo_dict(data):
+    headers["Cookie"] = cookie
     request = requests.post(url, headers=headers, data=data)
     if request.status_code != 200:
         print("RESPONSE", request.status_code)
@@ -115,7 +116,12 @@ def ConvertCalendar(course_dict):
     calendar.add('prodid', '-//My calendar product//mxm.dk//')
     calendar.add('version', '2.0')
     semester = int(course_dict['xsxx']['XQMMC'])
-    year = int(course_dict['xsxx']['XNM'])
+    # year = int(course_dict['xsxx']['XNM'])
+    yearname = course_dict['xsxx']['XNMC'].split('-')
+    if semester == 2:
+        year = int(yearname[1])
+    else:
+        year = int(yearname[0])
     for num in course_dict['kbList']:
         a = num
         week_string_list = a['zcd'].split(',')
@@ -140,13 +146,16 @@ def ShowHelp():
 def main():
     global cookie, filename
     now = datetime.datetime.now()
+    year = now.year
     if now.month <= 1 or now.month >= 9:
         semester = "3"
+        data = {"xnm": "{}".format(now.year), "xqm": semester}
+
     else:
         semester = "12"
+        data = {"xnm": "{}".format(now.year-1), "xqm": semester}
 
     if len(sys.argv) == 1:
-        data = {"xnm": "{}".format(now.year), "xqm": semester}
         course_dict = GetCourseInfo_dict(data)
         ConvertCalendar(course_dict)
         exit(0)
@@ -155,17 +164,16 @@ def main():
         if sys.argv[i] == '-f' or sys.argv[i] == '--file':
             if i+1 < len(sys.argv):
                 filename = sys.argv[i+1]
-            else:
-                if filename == "":
-                    ShowHelp()
-                    exit(1)
+            elif filename == "":
+                ShowHelp()
+                exit(1)
 
             course_dict = GetCourseInfoFromFile(filename)
             ConvertCalendar(course_dict)
             exit(0)
 
         elif sys.argv[i] == '-v' or sys.argv[i] == '--version':
-            print("Version: 1.3 - 2020.3.24")
+            print("Version: 1.4 - 2020.3.24")
             print("by: STARRY-S")
             exit(0)
 
@@ -176,11 +184,9 @@ def main():
         elif sys.argv[i] == '-c' or sys.argv[i] == '--cookie':
             if i+1 < len(sys.argv):
                 cookie = sys.argv[i+1]
-            else:
-                if cookie == "":
-                    ShowHelp()
-                    exit(1)
-            data = {"xnm": "{}".format(now.year), "xqm": semester}
+            elif cookie == "":
+                ShowHelp()
+                exit(1)
             course_dict = GetCourseInfo_dict(data)
             ConvertCalendar(course_dict)
             exit(0)
