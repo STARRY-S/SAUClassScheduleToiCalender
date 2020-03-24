@@ -1,6 +1,6 @@
 # SAU Class Schedule To iCalendar
 
-访问[新教务管理系统](https://jxgl.sau.edu.cn/jwglxt)，将沈航课程表转换成[iCanedar](https://tools.ietf.org/html/rfc2445)文件，可将课程信息导入手机日历中，~~然后把微信里那烦人并且不好用的智慧沈航提醒给关掉~~。
+访问[新教务管理系统](https://jxgl.sau.edu.cn/jwglxt)，将沈航课程表转换成[iCalendar](https://tools.ietf.org/html/rfc2445)文件，可将课程信息导入手机日历中，~~然后把微信里那烦人并且不好用的智慧沈航提醒给关掉~~。
 
 
 # Usage
