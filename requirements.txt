@@ -1,3 +1,4 @@
-icalendar==4.0.3
-pytz==2019.2
-requests==2.22.0
+icalendar >= 4.0.3
+pytz >= 2019.2
+requests >= 2.22.0
+certifi
